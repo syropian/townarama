@@ -85,6 +85,25 @@ function handleDeleteMap(mapId: string) {
               />
             </li>
           </ul>
+          <p
+            class="w-full px-4 pt-12 text-center text-xs font-extrabold tracking-wider text-amber-800 uppercase [text-shadow:0_1px_1px_var(--color-amber-400)]"
+          >
+            Made with <span class="text-red-500">&hearts;</span> by
+            <a
+              href="https://syropia.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="underline decoration-wavy transition-colors hover:text-amber-900"
+              >Collin Henderson</a
+            >. Graphics created by
+            <a
+              href="https://www.penzilladesign.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="underline decoration-wavy transition-colors hover:text-amber-900"
+              >Penzilla Design</a
+            >
+          </p>
         </div>
         <DialogClose
           class="font-display absolute -top-5 -right-4 z-20 flex aspect-square w-10 items-center justify-center rounded-full border-4 border-amber-300 bg-amber-400 text-amber-900 ring-4 ring-amber-800 ring-offset-2 ring-offset-amber-500 transition-transform outline-none hover:scale-105 hover:bg-amber-500"

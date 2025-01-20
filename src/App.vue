@@ -3,6 +3,7 @@ import { onBeforeMount } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Icon } from '@iconify/vue'
 import GameMap from '@/components/GameMap.vue'
+import GameAudio from '@/components/GameAudio.vue'
 import BuildMenu from '@/components/build-menu/BuildMenu.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import SvgCustomFilters from '@/components/SvgCustomFilters.vue'
@@ -11,7 +12,7 @@ import { useEntitiesStore } from '@/stores/useEntitiesStore'
 import { useGameStore } from '@/stores/useGameStore'
 import { usePlayerStore } from '@/stores/usePlayerStore'
 import { useStorage } from '@/stores/useStorage'
-import type { MapData } from './types'
+import type { MapData } from '@/types'
 
 const playerStore = usePlayerStore()
 const entitiesStore = useEntitiesStore()
@@ -59,6 +60,7 @@ onBeforeMount(async () => {
 
 <template>
   <div class="relative flex h-screen w-screen flex-col items-center justify-center overflow-x-hidden bg-cyan-600">
+    <!-- <GameAudio /> -->
     <SvgCustomFilters />
     <GameMap
       v-if="playerStore.maps.length && playerStore.currentMapId"

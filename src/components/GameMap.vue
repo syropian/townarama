@@ -115,7 +115,6 @@ function handleTileClicked(index: number, mapEntity: MapEntityData | undefined) 
       lastCollectedAt: null,
     }
     entitiesStore.addEntity(newEntity)
-    // selectedEntity.value = null
   }
 }
 
@@ -146,7 +145,7 @@ function findBaseEntityAtIndex(index: number) {
   >
     <div
       id="entity-layer"
-      class="absolute inset-0 translate-x-1/2 bg-black/0"
+      class="absolute inset-0 translate-x-1/2"
     >
       <div
         id="base-layer"
