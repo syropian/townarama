@@ -59,12 +59,14 @@ export const useEntitiesStore = defineStore('entities', {
     currentMapEntities(state): MapEntitiesByLayer {
       const playerStore = usePlayerStore()
       const gameStore = useGameStore()
+
       const mapEntities = [...playerStore.currentMap.mapEntities]
-      if (state.activeBuildable && gameStore?.currentVector) {
+
+      if (state.activeBuildable && gameStore.currentVector) {
         mapEntities.push({
           id: generateUuid(),
           entity: state.activeBuildable,
-          vector: useGameStore().currentVector ?? [0, 0],
+          vector: gameStore.currentVector,
           isFlipped: state.activeBuildableIsFlipped,
           createdAt: Date.now().toString(),
           updatedAt: Date.now().toString(),
