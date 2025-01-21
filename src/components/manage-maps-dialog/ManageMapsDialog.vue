@@ -52,9 +52,11 @@ function handleDeleteMap(mapId: string) {
       </BaseButton>
     </DialogTrigger>
     <DialogPortal>
-      <DialogOverlay class="fixed inset-0 z-30 bg-black/75 backdrop-blur-xs" />
+      <DialogOverlay
+        class="fixed inset-0 z-30 bg-black/75 opacity-0 backdrop-blur-xs transition-opacity transition-discrete data-[state=open]:opacity-100 starting:data-[state=open]:opacity-0"
+      />
       <DialogContent
-        class="fixed top-[50%] left-[50%] z-[100] w-[90vw] max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-3xl shadow-lg focus:outline-none"
+        class="fixed top-[50%] left-[50%] z-[100] w-[90vw] max-w-3xl -translate-x-1/2 translate-y-[calc(-1*50%+75px)] rounded-3xl shadow-lg transition-transform transition-discrete duration-500 ease-[cubic-bezier(0.25,_1.8,_0.25,_1)] focus:outline-none data-[state=open]:-translate-y-1/2 starting:data-[state=open]:translate-y-[calc(-1*50%+75px)]"
       >
         <div
           class="h-full max-h-[85dvh] overflow-x-hidden overflow-y-auto rounded-3xl border-8 border-amber-800 bg-amber-500 p-6"

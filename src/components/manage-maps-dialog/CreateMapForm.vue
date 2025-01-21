@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { DialogClose } from 'radix-vue'
 import AutoHeight from '@/components/ui/AutoHeight.vue'
+
+const DEFAULT_SIZE = 7
+const MIN_SIZE = 3
+const MAX_SIZE = 20
 
 const emit = defineEmits<{
   submit: [name: string, tiles: number]
@@ -10,11 +14,18 @@ const emit = defineEmits<{
 
 const isNewMapFormShowing = ref(false)
 const newMapName = ref('')
-const newMapTiles = ref(7)
+const newMapNameInput = ref<HTMLInputElement | null>(null)
+const newMapTiles = ref(DEFAULT_SIZE)
+
+watch(isNewMapFormShowing, isShowing => {
+  if (isShowing && newMapNameInput.value) {
+    newMapNameInput.value.focus()
+  }
+})
 
 function handleTileNumberChange() {
-  if (newMapTiles.value < 3) newMapTiles.value = 3
-  if (newMapTiles.value > 20) newMapTiles.value = 20
+  if (newMapTiles.value < MIN_SIZE) newMapTiles.value = MIN_SIZE
+  if (newMapTiles.value > MAX_SIZE) newMapTiles.value = MAX_SIZE
 }
 
 function toggleMapForm() {
@@ -23,9 +34,17 @@ function toggleMapForm() {
   setTimeout(() => {
     if (!isNewMapFormShowing.value) {
       newMapName.value = ''
-      newMapTiles.value = 7
+      newMapTiles.value = DEFAULT_SIZE
     }
   }, 300)
+}
+
+function handleCreateNewMap() {
+  handleTileNumberChange()
+
+  nextTick().then(() => {
+    emit('submit', newMapName.value.trim(), newMapTiles.value)
+  })
 }
 </script>
 <template>
@@ -57,11 +76,13 @@ function toggleMapForm() {
               Give your town a name
             </label>
             <input
+              ref="newMapNameInput"
               type="text"
               id="townName"
               v-model="newMapName"
-              class="w-full min-w-0 flex-1 rounded-xl bg-amber-300 p-1 pl-3 text-xl text-amber-800 outline-none"
+              class="w-full min-w-0 flex-1 rounded-xl bg-amber-300 p-1 pl-3 text-xl text-amber-800 outline-none focus:bg-amber-200"
               placeholder="New Mollyville"
+              autofocus
             />
           </div>
           <div class="flex flex-col gap-y-1">
@@ -99,7 +120,7 @@ function toggleMapForm() {
         <DialogClose :as-child="true">
           <button
             class="font-display relative mt-4 flex w-full items-center justify-center rounded-xl border-4 border-green-700 bg-green-800 px-8 py-3 text-2xl tracking-wider text-white transition-opacity [text-shadow:0_-1px_1px_var(--color-green-900)] outline-none hover:border-green-600 hover:bg-green-700 active:top-px disabled:pointer-events-none disabled:opacity-50"
-            @click="emit('submit', newMapName, newMapTiles)"
+            @click="handleCreateNewMap"
             :disabled="!newMapName.trim()"
             type="button"
           >
