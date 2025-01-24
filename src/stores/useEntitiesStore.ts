@@ -7,15 +7,22 @@ import { ALL_ENTITIES } from '@/constants/entities'
 import type { Buildables, EntityData, MapEntitiesByLayer, MapEntityData } from '@/types'
 import { useStorage } from './useStorage'
 
+type ActiveBuildable = {
+  entity: EntityData | null
+  isFlipped: boolean
+  selectedColor: string | null
+}
 type EntitiesStoreState = {
-  activeBuildable: EntityData | null
-  activeBuildableIsFlipped: boolean
+  activeBuildable: ActiveBuildable
 }
 export const useEntitiesStore = defineStore('entities', {
   state: () =>
     ({
-      activeBuildable: null,
-      activeBuildableIsFlipped: false,
+      activeBuildable: {
+        entity: null,
+        isFlipped: false,
+        selectedColor: null,
+      },
     }) as EntitiesStoreState,
   getters: {
     buildables(): Buildables {
@@ -38,18 +45,18 @@ export const useEntitiesStore = defineStore('entities', {
       )
     },
     buildablePreviewEntity(state): MapEntityData | null {
-      if (!state.activeBuildable) return null
+      if (!state.activeBuildable.entity) return null
 
-      return this.currentMapEntities[`${state.activeBuildable.layer}Layer`].find(isPreviewEntity) ?? null
+      return this.currentMapEntities[`${state.activeBuildable.entity.layer}Layer`].find(isPreviewEntity) ?? null
     },
     buildablePreviewEntityVectors(state): Vec2D[] {
       if (!this.buildablePreviewEntity || !state.activeBuildable) return []
 
       const {
         size: [cols, rows],
-      } = state.activeBuildable
-      const entityCols = state.activeBuildableIsFlipped ? rows : cols
-      const entityRows = state.activeBuildableIsFlipped ? cols : rows
+      } = state.activeBuildable.entity as EntityData
+      const entityCols = state.activeBuildable.isFlipped ? rows : cols
+      const entityRows = state.activeBuildable.isFlipped ? cols : rows
       const { vector } = this.buildablePreviewEntity
 
       return Array.from({ length: entityCols }).flatMap((_, x) =>
@@ -62,12 +69,14 @@ export const useEntitiesStore = defineStore('entities', {
 
       const mapEntities = [...playerStore.currentMap.mapEntities]
 
-      if (state.activeBuildable && gameStore.currentVector) {
+      if (state.activeBuildable.entity && gameStore.currentVector) {
         mapEntities.push({
           id: generateUuid(),
-          entity: state.activeBuildable,
+          entity: state.activeBuildable.entity,
+          color: state.activeBuildable.selectedColor ?? state.activeBuildable.entity.defaultColor,
+          variant: state.activeBuildable.entity.defaultVariant,
           vector: gameStore.currentVector,
-          isFlipped: state.activeBuildableIsFlipped,
+          isFlipped: state.activeBuildable.isFlipped,
           createdAt: Date.now().toString(),
           updatedAt: Date.now().toString(),
           lastCollectedAt: null,
@@ -137,6 +146,11 @@ export const useEntitiesStore = defineStore('entities', {
 
       playerStore.setCurrentMapEntities(playerStore.currentMap.mapEntities.filter(entity => entity.id !== mapEntity.id))
       await syncMapsToStorage()
+    },
+    clearActiveBuildable() {
+      this.activeBuildable.entity = null
+      this.activeBuildable.selectedColor = null
+      this.activeBuildable.isFlipped = false
     },
   },
 })

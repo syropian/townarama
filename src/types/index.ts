@@ -1,10 +1,14 @@
 export type EntityData = {
   id: string
   name: string
-  texture: string
+  defaultVariant: string
+  defaultColor?: string
   category: EntityCategory
+  subcategory: string | null
   layer: EntityLayer
   size: [number, number]
+  availableColors?: Array<string>
+  variants?: Array<string>
   cost: number | null
   requiredLevel: number
   buildTime: number
@@ -12,6 +16,7 @@ export type EntityData = {
   currencyValue: number | null
   xpValue: number | null
 }
+
 export type MapData = {
   id: string
   name: string
@@ -21,6 +26,8 @@ export type MapData = {
 export type MapEntityData = {
   id: string
   entity: EntityData
+  color?: string
+  variant?: string
   vector: [number, number]
   isFlipped: boolean
   lastCollectedAt: string | null

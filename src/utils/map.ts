@@ -12,7 +12,7 @@ export function generateMapTiles(initialEntities: MapEntityData[], mapSize: numb
       id: generateUuid(),
       entity: {
         id: 'grass-1',
-        texture: 'base/grass/grass.png',
+        defaultVariant: 'base/grass/grass.png',
         category: 'base',
         layer: 'base',
         size: [1, 1],

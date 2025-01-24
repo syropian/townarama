@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { TILE_HEIGHT, TILE_WIDTH } from '@/constants/game'
-import { isPreviewEntity } from '@/utils/entities'
+import { getEntityDefaultTexture, isPreviewEntity } from '@/utils/entities'
 import type { MapEntityData } from '@/types'
 
 const props = defineProps<{
@@ -29,6 +29,14 @@ const position = computed<Vec2D>(() => {
   const isoTop = (x + y) * (TILE_HEIGHT / 2) + TILE_HEIGHT / 2
 
   return [isoLeft, isoTop]
+})
+
+const texturePath = computed(() => {
+  if (props.mapEntity.entity.subcategory && props.mapEntity.entity.defaultColor) {
+    return `/img/textures/${props.mapEntity.entity.category}/${props.mapEntity.entity.subcategory}/${props.mapEntity.color}/${props.mapEntity.entity.defaultVariant}`
+  }
+
+  return `/img/textures/${props.mapEntity.entity.defaultVariant}`
 })
 
 const entityFilter = computed(() => {
@@ -59,7 +67,7 @@ const entityFilter = computed(() => {
     }"
   >
     <img
-      :src="`/img/textures/${mapEntity.entity.texture}`"
+      :src="texturePath"
       class="absolute h-auto w-full"
       :style="{
         bottom: `-${(x + y + 1) * 0.4}px`,

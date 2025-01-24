@@ -27,7 +27,7 @@ export function isNotPreviewEntity(entity: MapEntityData): boolean {
 }
 
 export function isGroundTile(entity: EntityData): boolean {
-  return entity.texture.includes('grass')
+  return entity.defaultVariant.includes('grass')
 }
 
 export function getOverlappingEntityVectors(mapEntity: MapEntityData): Vec2D[] {
@@ -39,4 +39,12 @@ export function getOverlappingEntityVectors(mapEntity: MapEntityData): Vec2D[] {
   return Array.from({ length: size[0] }).flatMap((_, x) =>
     Array.from({ length: size[1] }).map((_, y) => [vector[0] + x, vector[1] + y] as Vec2D)
   )
+}
+
+export function getEntityDefaultTexture(entity: EntityData) {
+  if (entity.subcategory && entity.defaultColor) {
+    return `/img/textures/${entity.category}/${entity.subcategory}/${entity.defaultColor}/${entity.defaultVariant}`
+  }
+
+  return `/img/textures/${entity.defaultVariant}`
 }

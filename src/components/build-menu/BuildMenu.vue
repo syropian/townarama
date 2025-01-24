@@ -8,7 +8,6 @@ import {
   PopoverRoot,
   PopoverTrigger,
   TabsContent,
-  TabsIndicator,
   TabsList,
   TabsRoot,
   TabsTrigger,
@@ -16,7 +15,11 @@ import {
 import { Icon } from '@iconify/vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useEntitiesStore } from '@/stores/useEntitiesStore'
+import { getEntityDefaultTexture } from '@/utils/entities'
 import type { Buildables } from '@/types'
+
+type TabValue = keyof Buildables
+type Tab = { label: string; value: TabValue }
 
 defineProps<{
   buildables: Buildables
@@ -26,10 +29,16 @@ defineEmits<{
   click: () => void
 }>()
 
-const activeTab = ref('buildings')
+const activeTab = ref<keyof Buildables>('buildings')
 
 const entitiesStore = useEntitiesStore()
 const { activeBuildable } = storeToRefs(entitiesStore)
+
+const tabs = ref<Tab[]>([
+  { label: '🏠', value: 'buildings' },
+  { label: '🌳', value: 'decorations' },
+  { label: '🛣️', value: 'roads' },
+])
 </script>
 <template>
   <PopoverRoot :modal="true">
@@ -38,7 +47,7 @@ const { activeBuildable } = storeToRefs(entitiesStore)
       class="aspect-square h-20 w-20"
       @click="$emit('click')"
     >
-      <div v-if="!activeBuildable">
+      <div v-if="!activeBuildable.entity">
         <span class="sr-only">Build</span
         ><span
           role="presentation"
@@ -50,11 +59,11 @@ const { activeBuildable } = storeToRefs(entitiesStore)
         v-else
         class="flex h-full w-full items-center justify-center"
       >
-        <span class="sr-only">{{ activeBuildable.name }}</span
+        <span class="sr-only">{{ activeBuildable.entity.name }}</span
         ><img
-          :src="`/img/textures/${activeBuildable.texture}`"
-          :alt="activeBuildable.name"
-          class="h-12 w-12 object-contain"
+          :src="getEntityDefaultTexture(activeBuildable.entity)"
+          :alt="activeBuildable.entity.name"
+          class="h-18 w-18 object-contain"
         />
       </div>
     </PopoverTrigger>
@@ -63,73 +72,37 @@ const { activeBuildable } = storeToRefs(entitiesStore)
         side="top"
         align="start"
         :side-offset="12"
-        class="max-w-md overflow-hidden overflow-y-auto rounded-xl bg-amber-50 p-1 shadow-lg"
+        class="max-w-md overflow-hidden overflow-y-auto rounded-xl border-4 border-amber-800 bg-amber-500 p-1 shadow-lg"
       >
         <TabsRoot v-model="activeTab">
           <TabsList class="flex items-center gap-x-1">
             <TabsTrigger
-              value="buildings"
-              class="aspect-square p-3 text-6xl"
-              >🏠</TabsTrigger
-            >
-            <TabsTrigger
-              value="decorations"
-              class="aspect-square p-3 text-6xl"
-              >🌳</TabsTrigger
-            >
-            <TabsTrigger
-              value="roads"
-              class="aspect-square p-3 text-6xl"
-              >🛣️</TabsTrigger
+              v-for="tab in tabs"
+              :key="tab.value"
+              :value="tab.value"
+              :aria-label="tab.value"
+              class="relative aspect-square rounded-t-lg p-3 text-6xl data-[state=active]:z-20 data-[state=active]:bg-amber-50 data-[state=inactive]:bg-amber-200"
+              >{{ tab.label }}</TabsTrigger
             >
           </TabsList>
-          <TabsContent value="buildings">
-            <div class="grid max-h-96 grid-cols-4 gap-4 overflow-y-auto rounded-xl border-2 border-amber-600 p-4">
+          <TabsContent
+            v-for="tab in tabs"
+            :key="tab.value"
+            :value="tab.value"
+            class="relative z-10"
+          >
+            <div
+              class="grid max-h-96 grid-cols-4 gap-4 overflow-y-auto rounded-xl rounded-tl-none bg-amber-50 p-4 shadow-[0_-1px_3px_rgba(0,0,0,0.13)]"
+            >
               <PopoverClose
-                v-for="buildable in buildables.buildings"
+                v-for="buildable in buildables[tab.value]"
                 :key="buildable.id"
                 type="button"
-                class="inline-flex flex-col items-center gap-y-2 rounded bg-amber-100 px-2 py-1 text-amber-800 ring-2 ring-amber-400 transition hover:ring-amber-500"
-                @click="activeBuildable = buildable"
+                class="inline-flex flex-col items-center gap-y-2 rounded bg-white px-2 py-1 text-amber-800 ring-2 shadow-md ring-amber-800/30 transition-shadow hover:shadow-lg hover:ring-amber-600"
+                @click="activeBuildable.entity = buildable"
               >
                 <img
-                  :src="`/img/textures/${buildable.texture}`"
-                  class="h-20 w-20 object-contain"
-                  lazy
-                />
-                <span class="mt-auto text-sm font-semibold">{{ buildable.name }}</span>
-              </PopoverClose>
-            </div>
-          </TabsContent>
-          <TabsContent value="decorations">
-            <div class="grid max-h-96 grid-cols-4 gap-4 overflow-y-auto rounded-sm border-2 border-amber-600 p-4">
-              <PopoverClose
-                v-for="buildable in buildables.decorations"
-                :key="buildable.id"
-                type="button"
-                class="inline-flex flex-col items-center gap-y-2 rounded bg-amber-100 px-2 py-1 text-amber-800 ring-2 ring-amber-400 transition hover:ring-amber-500"
-                @click="activeBuildable = buildable"
-              >
-                <img
-                  :src="`/img/textures/${buildable.texture}`"
-                  class="h-20 w-20 object-contain"
-                  lazy
-                />
-                <span class="mt-auto text-sm font-semibold">{{ buildable.name }}</span>
-              </PopoverClose>
-            </div>
-          </TabsContent>
-          <TabsContent value="roads">
-            <div class="grid max-h-96 grid-cols-4 gap-4 overflow-y-auto rounded-sm border-2 border-amber-600 p-4">
-              <PopoverClose
-                v-for="buildable in buildables.roads"
-                :key="buildable.id"
-                type="button"
-                class="inline-flex flex-col items-center gap-y-2 rounded bg-amber-100 px-2 py-1 text-amber-800 ring-2 ring-amber-400 transition hover:ring-amber-500"
-                @click="activeBuildable = buildable"
-              >
-                <img
-                  :src="`/img/textures/${buildable.texture}`"
+                  :src="getEntityDefaultTexture(buildable)"
                   class="h-20 w-20 object-contain"
                   lazy
                 />
@@ -138,7 +111,7 @@ const { activeBuildable } = storeToRefs(entitiesStore)
             </div>
           </TabsContent>
         </TabsRoot>
-      </PopoverContent></PopoverPortal
-    >
+      </PopoverContent>
+    </PopoverPortal>
   </PopoverRoot>
 </template>

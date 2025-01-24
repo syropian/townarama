@@ -26,34 +26,31 @@ const totalTiles = computed(() => {
 
 const entitiesStore = useEntitiesStore()
 const gameStore = useGameStore()
-const {
-  activeBuildable,
-  activeBuildableIsFlipped,
-  buildablePreviewEntity,
-  canPlaceActiveBuildable,
-  currentMapEntities,
-  sortedEntities,
-} = storeToRefs(entitiesStore)
+const { activeBuildable, buildablePreviewEntity, canPlaceActiveBuildable, currentMapEntities, sortedEntities } =
+  storeToRefs(entitiesStore)
 
 watch(activeBuildable, buildable => {
   if (!buildable) {
-    activeBuildableIsFlipped.value = false
+    activeBuildable.value.isFlipped = false
   } else {
     gameStore.inDemolitionMode = false
   }
 })
 
-watch(activeBuildableIsFlipped, isFlipped => {
-  playerStore.setCurrentMapEntities(
-    playerStore.currentMap.mapEntities.map(entity => {
-      if (isNotPreviewEntity(entity)) return entity
-      return {
-        ...entity,
-        isFlipped,
-      }
-    })
-  )
-})
+watch(
+  () => activeBuildable.value.isFlipped,
+  isFlipped => {
+    playerStore.setCurrentMapEntities(
+      playerStore.currentMap.mapEntities.map(entity => {
+        if (isNotPreviewEntity(entity)) return entity
+        return {
+          ...entity,
+          isFlipped,
+        }
+      })
+    )
+  }
+)
 
 onKeyStroke(
   'Escape',
@@ -61,7 +58,7 @@ onKeyStroke(
     gameStore.inDemolitionMode = false
     if (activeBuildable.value) {
       e.preventDefault()
-      activeBuildable.value = null
+      entitiesStore.clearActiveBuildable()
     }
   },
   { dedupe: true }
@@ -72,7 +69,7 @@ onKeyStroke(
   e => {
     if (activeBuildable.value) {
       e.preventDefault()
-      activeBuildableIsFlipped.value = !activeBuildableIsFlipped.value
+      activeBuildable.value.isFlipped = !activeBuildable.value.isFlipped
     }
   },
   { dedupe: true }
@@ -93,7 +90,7 @@ function handleTileHovered(index: number) {
 }
 
 function handleTileClicked(index: number, mapEntity: MapEntityData | undefined) {
-  if (!activeBuildable.value) {
+  if (!activeBuildable.value.entity) {
     if (!mapEntity) return
     // look for entities on object layer with matching vector
     if (gameStore.inDemolitionMode) {
@@ -104,12 +101,13 @@ function handleTileClicked(index: number, mapEntity: MapEntityData | undefined) 
 
     return
   }
-  if (activeBuildable.value && canPlaceActiveBuildable.value) {
+  if (activeBuildable.value.entity && canPlaceActiveBuildable.value) {
     const newEntity: MapEntityData = {
       id: generateUuid(),
-      entity: activeBuildable.value,
+      entity: activeBuildable.value.entity,
       vector: tileIndexToVector(index, mapSize.value),
-      isFlipped: activeBuildableIsFlipped.value,
+      isFlipped: activeBuildable.value.isFlipped,
+      color: activeBuildable.value.selectedColor ?? activeBuildable.value.entity.defaultColor,
       createdAt: Date.now().toString(),
       updatedAt: Date.now().toString(),
       lastCollectedAt: null,

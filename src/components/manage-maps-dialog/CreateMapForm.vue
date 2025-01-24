@@ -81,7 +81,7 @@ function handleCreateNewMap() {
               id="townName"
               v-model="newMapName"
               class="w-full min-w-0 flex-1 rounded-xl bg-amber-300 p-1 pl-3 text-xl text-amber-800 outline-none focus:bg-amber-200"
-              placeholder="New Mollyville"
+              placeholder="New Townsville"
               autofocus
             />
           </div>

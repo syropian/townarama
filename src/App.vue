@@ -5,6 +5,7 @@ import { Icon } from '@iconify/vue'
 import GameMap from '@/components/GameMap.vue'
 import GameAudio from '@/components/GameAudio.vue'
 import BuildMenu from '@/components/build-menu/BuildMenu.vue'
+import ColorSelect from '@/components/ColorSelect.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import SvgCustomFilters from '@/components/SvgCustomFilters.vue'
 import ManageMapsDialog from '@/components/manage-maps-dialog/ManageMapsDialog.vue'
@@ -76,27 +77,45 @@ onBeforeMount(async () => {
       :style="{ scale: 1 }"
     />
     <div class="fixed bottom-0 left-0 z-10 flex w-full items-center justify-center">
-      <div class="flex w-full max-w-screen-lg items-center gap-x-4 p-16">
+      <menu class="flex w-full max-w-screen-lg items-center gap-x-4 p-16">
         <BuildMenu
           :buildables="buildables"
           @click="inDemolitionMode = false"
         />
         <BaseButton
-          v-if="activeBuildable"
+          v-if="activeBuildable.entity"
           class="aspect-square h-20 w-20"
-          @click="activeBuildable = null"
+          @click="entitiesStore.activeBuildable.isFlipped = !entitiesStore?.activeBuildable?.isFlipped"
+        >
+          <div>
+            <span class="sr-only">Flip buildable</span
+            ><span
+              role="presentation"
+              class="text-5xl text-amber-700 drop-shadow-[0_1px_0px_var(--color-amber-300)]"
+              ><Icon icon="tdesign:mirror-filled"
+            /></span>
+          </div>
+        </BaseButton>
+        <ColorSelect
+          v-if="activeBuildable?.entity?.availableColors"
+          @change="activeBuildable.selectedColor = $event"
+        />
+        <BaseButton
+          v-if="activeBuildable.entity"
+          class="aspect-square h-20 w-20"
+          @click="entitiesStore.clearActiveBuildable()"
         >
           <div>
             <span class="sr-only">Exit build mode</span
             ><span
               role="presentation"
-              class="text-2xl"
-              >❌</span
-            >
+              class="text-3xl text-amber-700 drop-shadow-[0_1px_0px_var(--color-amber-300)]"
+              ><Icon icon="ion:close-round"
+            /></span>
           </div>
         </BaseButton>
         <BaseButton
-          v-if="inDemolitionMode && !activeBuildable"
+          v-if="inDemolitionMode && !activeBuildable.entity"
           class="aspect-square h-20 w-20"
           @click="inDemolitionMode = false"
         >
@@ -104,16 +123,16 @@ onBeforeMount(async () => {
             <span class="sr-only">Exit demolition mode</span
             ><span
               role="presentation"
-              class="text-2xl"
-              >❌</span
-            >
+              class="text-3xl text-amber-700 drop-shadow-[0_1px_0px_var(--color-amber-300)]"
+              ><Icon icon="ion:close-round"
+            /></span>
           </div>
         </BaseButton>
         <BaseButton
-          v-else-if="!inDemolitionMode && !activeBuildable"
+          v-else-if="!inDemolitionMode && !activeBuildable.entity"
           class="aspect-square h-20 w-20"
           @click="inDemolitionMode = true"
-          :disabled="Boolean(activeBuildable)"
+          :disabled="Boolean(activeBuildable.entity)"
         >
           <div>
             <span class="sr-only">Enter demolition mode</span
@@ -130,7 +149,7 @@ onBeforeMount(async () => {
           @rename-map="renameMap"
           @delete-map="deleteMap"
         />
-      </div>
+      </menu>
     </div>
   </div>
 </template>
