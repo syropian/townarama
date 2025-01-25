@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { usePlayerStore } from '@/stores/usePlayerStore'
 import { useGameStore } from '@/stores/useGameStore'
 import { generateUuid } from '@/utils'
-import { getEntityAtVector, isPreviewEntity } from '@/utils/entities'
+import { getEntityAtVector, isGroundTile, isPreviewEntity } from '@/utils/entities'
 import { ALL_ENTITIES } from '@/constants/entities'
 import type { Buildables, EntityData, MapEntitiesByLayer, MapEntityData } from '@/types'
 import { useStorage } from './useStorage'
@@ -30,7 +30,7 @@ export const useEntitiesStore = defineStore('entities', {
 
       return ALL_ENTITIES.reduce(
         (acc, entity) => {
-          if (entity.cost !== null && acc[entity.category as BuildableKeys]) {
+          if (!isGroundTile(entity) && acc[entity.category as BuildableKeys]) {
             acc[entity.category as BuildableKeys].push(entity)
           }
 

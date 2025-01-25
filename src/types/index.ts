@@ -9,12 +9,6 @@ export type EntityData = {
   size: [number, number]
   availableColors?: Array<string>
   variants?: Array<string>
-  cost: number | null
-  requiredLevel: number
-  buildTime: number
-  collectionTime: number | null
-  currencyValue: number | null
-  xpValue: number | null
 }
 
 export type MapData = {
