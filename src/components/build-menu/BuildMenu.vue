@@ -16,12 +16,12 @@ import { Icon } from '@iconify/vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useEntitiesStore } from '@/stores/useEntitiesStore'
 import { getEntityDefaultTexture } from '@/utils/entities'
-import type { Buildables } from '@/types'
+import type { Buildables, EntityData } from '@/types'
 
 type TabValue = keyof Buildables
 type Tab = { label: string; value: TabValue }
 
-defineProps<{
+const props = defineProps<{
   buildables: Buildables
 }>()
 
@@ -39,6 +39,36 @@ const tabs = ref<Tab[]>([
   { label: '🌳', value: 'decorations' },
   { label: '🛣️', value: 'roads' },
 ])
+
+function getBuildablesForTab(tab: TabValue): Record<string, EntityData[]> {
+  return props.buildables[tab]
+    .flatMap(buildable => {
+      if (buildable?.variants) {
+        return buildable.variants.map((variant, index) => {
+          return {
+            ...buildable,
+            id: `${buildable.id}-${index + 1}`,
+            defaultVariant: variant,
+            variants: undefined,
+          }
+        })
+      }
+
+      return buildable
+    })
+    .reduce(
+      (acc, curr) => {
+        if (curr.subcategory) {
+          acc[curr.subcategory] = [...(acc[curr.subcategory] ?? []), curr]
+        } else {
+          acc['none'] = [...(acc['none'] ?? []), curr]
+        }
+
+        return acc
+      },
+      {} as Record<string, EntityData[]>
+    )
+}
 </script>
 <template>
   <PopoverRoot :modal="true">
@@ -92,22 +122,35 @@ const tabs = ref<Tab[]>([
             class="relative z-10"
           >
             <div
-              class="grid max-h-96 grid-cols-4 gap-4 overflow-y-auto rounded-xl rounded-tl-none bg-amber-50 p-4 shadow-[0_-1px_3px_rgba(0,0,0,0.13)]"
+              class="max-h-96 space-y-6 overflow-y-auto rounded-xl rounded-tl-none bg-amber-50 p-4 shadow-[0_-1px_3px_rgba(0,0,0,0.13)]"
             >
-              <PopoverClose
-                v-for="buildable in buildables[tab.value]"
-                :key="buildable.id"
-                type="button"
-                class="inline-flex flex-col items-center gap-y-2 rounded bg-white px-2 py-1 text-amber-800 ring-2 shadow-md ring-amber-800/30 transition-shadow hover:shadow-lg hover:ring-amber-600"
-                @click="activeBuildable.entity = buildable"
+              <div
+                v-for="(buildables, category) in getBuildablesForTab(tab.value)"
+                :key="category"
               >
-                <img
-                  :src="getEntityDefaultTexture(buildable)"
-                  class="h-20 w-20 object-contain"
-                  lazy
-                />
-                <span class="mt-auto text-sm font-semibold">{{ buildable.name }}</span>
-              </PopoverClose>
+                <h4
+                  class="text-brown mb-3 font-bold text-amber-800 first-letter:uppercase"
+                  v-if="category !== 'none'"
+                >
+                  {{ category }}
+                </h4>
+                <div class="grid grid-cols-4 gap-4">
+                  <PopoverClose
+                    v-for="buildable in buildables"
+                    :key="buildable.id"
+                    type="button"
+                    class="inline-flex flex-col items-center gap-y-2 rounded bg-white px-2 py-1 text-amber-800 ring-2 shadow-md ring-amber-800/30 transition-shadow hover:shadow-lg hover:ring-amber-600"
+                    @click="activeBuildable.entity = buildable"
+                  >
+                    <img
+                      :src="getEntityDefaultTexture(buildable)"
+                      class="h-20 w-20 object-contain"
+                      lazy
+                    />
+                    <span class="mt-auto text-sm font-semibold">{{ buildable.name }}</span>
+                  </PopoverClose>
+                </div>
+              </div>
             </div>
           </TabsContent>
         </TabsRoot>

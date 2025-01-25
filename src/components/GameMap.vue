@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { onKeyStroke } from '@vueuse/core'
 import EntityRenderer from '@/components/EntityRenderer.vue'
@@ -56,8 +56,8 @@ onKeyStroke(
   'Escape',
   e => {
     gameStore.inDemolitionMode = false
+
     if (activeBuildable.value) {
-      e.preventDefault()
       entitiesStore.clearActiveBuildable()
     }
   },
