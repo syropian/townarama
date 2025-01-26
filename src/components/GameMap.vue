@@ -82,7 +82,7 @@ onMounted(() => {
     if (mapRoot.value) {
       mapRoot.value.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' })
     }
-  }, 10)
+  }, 100)
 })
 
 function getObjectAtTileIndex(index: number): MapEntityData | undefined {
