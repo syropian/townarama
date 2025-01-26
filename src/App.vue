@@ -65,7 +65,7 @@ onBeforeMount(async () => {
   <div class="relative flex h-[300dvh] w-[300vw] flex-col items-center justify-center overflow-x-hidden bg-cyan-600">
     <!-- <GameAudio /> -->
     <SvgCustomFilters />
-    <div class="fixed top-8 left-0 z-20 flex w-full items-center justify-center">
+    <div class="fixed top-8 left-0 z-10 flex w-full items-center justify-center">
       <p
         v-if="playerStore.currentMapId"
         class="font-display ring-inset-amber-300 flex items-center justify-center gap-x-4 rounded-full border-4 border-amber-800 bg-gradient-to-t from-amber-400 to-amber-300 px-8 py-3 text-xl text-amber-800 ring-4 shadow-lg ring-amber-200 ring-offset-2 ring-offset-amber-500 ring-inset"

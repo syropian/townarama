@@ -103,7 +103,7 @@ function getBuildablesForTab(tab: TabValue): Record<string, EntityData[]> {
         side="top"
         align="start"
         :side-offset="12"
-        class="max-w-lg overflow-hidden overflow-y-auto rounded-xl border-4 border-amber-800 bg-amber-500 p-1 shadow-lg"
+        class="relative z-10 max-w-lg overflow-hidden overflow-y-auto rounded-xl border-4 border-amber-800 bg-amber-500 p-1 shadow-lg"
       >
         <TabsRoot v-model="activeTab">
           <TabsList class="flex items-center gap-x-1">
