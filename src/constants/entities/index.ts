@@ -119,7 +119,7 @@ export const ALL_ENTITIES: EntityData[] = [
     category: 'buildings',
     subcategory: 'shopping',
     layer: 'object',
-    size: [1, 2],
+    size: [2, 1],
   },
   {
     id: 'flower-shop',
@@ -128,7 +128,7 @@ export const ALL_ENTITIES: EntityData[] = [
     category: 'buildings',
     subcategory: 'shopping',
     layer: 'object',
-    size: [1, 2],
+    size: [2, 1],
   },
   {
     id: 'convenience-store',
@@ -137,7 +137,7 @@ export const ALL_ENTITIES: EntityData[] = [
     category: 'buildings',
     subcategory: 'shopping',
     layer: 'object',
-    size: [1, 2],
+    size: [2, 1],
   },
   {
     id: 'music-store',
@@ -146,7 +146,7 @@ export const ALL_ENTITIES: EntityData[] = [
     category: 'buildings',
     subcategory: 'shopping',
     layer: 'object',
-    size: [1, 2],
+    size: [2, 1],
   },
   {
     id: 'hardware-store',
@@ -155,7 +155,7 @@ export const ALL_ENTITIES: EntityData[] = [
     category: 'buildings',
     subcategory: 'shopping',
     layer: 'object',
-    size: [1, 2],
+    size: [2, 1],
   },
   {
     id: 'pharmacy',
@@ -164,7 +164,7 @@ export const ALL_ENTITIES: EntityData[] = [
     category: 'buildings',
     subcategory: 'shopping',
     layer: 'object',
-    size: [1, 2],
+    size: [2, 1],
   },
   {
     id: 'police-station',
