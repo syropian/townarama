@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { onKeyStroke } from '@vueuse/core'
 import EntityRenderer from '@/components/EntityRenderer.vue'
@@ -28,6 +28,8 @@ const entitiesStore = useEntitiesStore()
 const gameStore = useGameStore()
 const { activeBuildable, buildablePreviewEntity, canPlaceActiveBuildable, currentMapEntities, sortedEntities } =
   storeToRefs(entitiesStore)
+
+const mapRoot = ref<HTMLDivElement | null>(null)
 
 watch(activeBuildable, buildable => {
   if (!buildable) {
@@ -74,6 +76,14 @@ onKeyStroke(
   },
   { dedupe: true }
 )
+
+onMounted(() => {
+  setTimeout(() => {
+    if (mapRoot.value) {
+      mapRoot.value.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' })
+    }
+  }, 10)
+})
 
 function getObjectAtTileIndex(index: number): MapEntityData | undefined {
   const [x, y] = tileIndexToVector(index, mapSize.value)
@@ -134,6 +144,7 @@ function findBaseEntityAtIndex(index: number) {
 
 <template>
   <div
+    ref="mapRoot"
     class="relative select-none"
     :class="{ 'border-t border-red-500': false }"
     :style="{
