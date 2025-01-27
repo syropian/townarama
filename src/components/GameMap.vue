@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { onKeyStroke } from '@vueuse/core'
 import EntityRenderer from '@/components/EntityRenderer.vue'
@@ -13,6 +13,7 @@ import { isNotPreviewEntity } from '@/utils/entities'
 import { tileIndexToVector } from '@/utils/map'
 import { TILE_WIDTH, TILE_HEIGHT, SKEWED_TILE_WIDTH } from '@/constants/game'
 import type { MapEntityData } from '@/types'
+import { debounce } from 'lodash-es'
 
 const playerStore = usePlayerStore()
 
@@ -77,12 +78,30 @@ onKeyStroke(
   { dedupe: true }
 )
 
+const handleResize = debounce(
+  () => {
+    setTimeout(() => {
+      if (mapRoot.value) {
+        mapRoot.value.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' })
+      }
+    }, 100)
+  },
+  100,
+  { trailing: true }
+)
+
 onMounted(() => {
   setTimeout(() => {
     if (mapRoot.value) {
       mapRoot.value.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' })
     }
   }, 100)
+
+  window.addEventListener('resize', handleResize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
 })
 
 function getObjectAtTileIndex(index: number): MapEntityData | undefined {

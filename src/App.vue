@@ -22,8 +22,6 @@ const { storage } = useStorage()
 const { activeBuildable, buildables } = storeToRefs(entitiesStore)
 const { inDemolitionMode } = storeToRefs(gameStore)
 
-const rGameMap = ref<HTMLElement | null>(null)
-
 async function createNewMap(mapName: string, tiles: number) {
   const newMap = await playerStore.createNewMap(mapName, tiles)
   await playerStore.setCurrentMapId(newMap.id)
